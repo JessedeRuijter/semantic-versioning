@@ -3,16 +3,12 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "semver"
+name = "semversion"
 description = "Annotation protocol to allow very thorough isinstance checks."
 readme = "README.md"
 requires-python = ">=3.10"
 maintainers = [
-    { name = "Steffen Burgers", email = "steffen.burgers@rhdhv.com" },
-    { name = "Ruud Kassing", email = "ruud.kassing@rhdhv.com" },
-    { name = "Miguel Pereira Hernandez", email = "miguel.hernandez@rhdhv.com" },
-    { name = "Jesse de Ruijter", email = "jesse.de.ruijter@rhdhv.com" },
-    { name = "Pierpaolo Lucarelli", email = "pierpaolo.lucarelli@rhdhv.com" }
+    { name = "Jesse de Ruijter", email = "jessederuijter@gmail.com" },
 ]
 dependencies = []
 optional-dependencies.dev = ["pytest", "black", "pre-commit", "isort", "bandit==1.7.0", "flake8"]

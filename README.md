@@ -13,7 +13,7 @@ pip install semversion
 Use **validate** function to check if versions in strings are correctly formatted.
 
 ```python
-from semver import SemanticVersion
+from semversion import SemanticVersion
 
 # use to validate (returns True)
 assert SemanticVersion.validate("3.4.5-dev1")
@@ -22,7 +22,7 @@ assert SemanticVersion.validate("3.4.5-dev1")
 Use **parse** function to load a SemanticVersion object from a string.
 
 ```python
-from semver import SemanticVersion
+from semversion import SemanticVersion
 
 SemanticVersion.parse("1.2.4")
 # SemanticVersion(major=1, minor=2, patch=3)
@@ -40,7 +40,7 @@ SemanticVersion.parse("1.0.1.2.5")
 The SemanticVersion class is comparable and will correctly take pre/dev/post releases into account.
 
 ```python
-from semver import SemanticVersion
+from semversion import SemanticVersion
 
 SemanticVersion.parse("1.2.3") < SemanticVersion.parse("1.2.4") # True
 SemanticVersion.parse("1.2.3") < SemanticVersion.parse("1.2") # True
