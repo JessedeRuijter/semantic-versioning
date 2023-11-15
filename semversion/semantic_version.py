@@ -135,25 +135,26 @@ class SemanticVersion:
             bool: if the version is smaller than other.
         """
         versions_length = max(len(self.versions or []), len(other.versions or []))
-        return (
-            self.major,
-            self.minor or math.inf,
-            self.patch or math.inf,
-            *pad(self.versions, versions_length, math.inf),
-            pre_release_type_to_int(self.pre_release_type),
-            self.pre_release or math.inf,
-            self.post_release or math.inf,
-            self.dev_release or math.inf,
-        ) < (
-            other.major,
-            other.minor,
-            other.patch,
-            *pad(other.versions, versions_length, math.inf),
-            pre_release_type_to_int(self.pre_release_type),
-            other.pre_release or math.inf,
-            other.post_release or math.inf,
-            other.dev_release or math.inf,
+        return self.__compare_tuple(self, versions_length) < self.__compare_tuple(
+            other, versions_length
         )
+
+    @staticmethod
+    def __compare_tuple(v: SemanticVersion, v_length: int) -> tuple:
+        ct = (
+            v.major,
+            v.minor or math.inf,
+            v.patch or math.inf,
+            *pad(v.versions, v_length, math.inf),
+            pre_release_type_to_int(v.pre_release_type) or math.inf
+            if not v.post_release and not v.dev_release
+            else -1,
+            v.pre_release or math.inf if not v.post_release and not v.dev_release else -1,
+            v.post_release or math.inf if not v.dev_release else -1,
+            v.dev_release or math.inf,
+        )
+        print(ct)
+        return ct
 
     def __hash__(self) -> int:
         """Override hash to show version dotted notation."""
