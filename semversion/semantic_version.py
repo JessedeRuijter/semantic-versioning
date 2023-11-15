@@ -43,7 +43,10 @@ class SemanticVersion:
             version.replace(separator, ".")
 
         if not (match := re.fullmatch(re.compile(FULL_VERSION_PATTERN), version)):
-            msg = f"Invalid format for semantic version {version!r}. Only X.X.X(.devX) or with other separator allowed."
+            msg = (
+                f"Invalid format for semantic version {version!r}.",
+                "Only X.X.X(.devX) or with other separator allowed.",
+            )
             raise AssertionError(msg)
 
         version_dict = {}
