@@ -1,19 +1,19 @@
-# semversion
+# semantic_versioning
 Another semantic versioning package, but better! It follows semantic versioning described in **PEP440**.
 
 ## Installation
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install **semversion**.
+Use the package manager [pip](https://pip.pypa.io/en/stable/) to install **semantic_versioning**.
 
 ```bash
-pip install semversion
+pip install semantic_versioning
 ```
 
 ## Usage
 Use **validate** function to check if versions in strings are correctly formatted.
 
 ```python
-from semversion import SemanticVersion
+from semantic_versioning import SemanticVersion
 
 # use to validate (returns True)
 assert SemanticVersion.validate("3.4.5-dev1")
@@ -22,7 +22,7 @@ assert SemanticVersion.validate("3.4.5-dev1")
 Use **parse** function to load a SemanticVersion object from a string.
 
 ```python
-from semversion import SemanticVersion
+from semantic_versioning import SemanticVersion
 
 SemanticVersion.parse("1.2.4")
 # SemanticVersion(major=1, minor=2, patch=3)
@@ -40,7 +40,7 @@ SemanticVersion.parse("1.0.1.2.5")
 The SemanticVersion class is comparable and will correctly take pre/dev/post releases into account.
 
 ```python
-from semversion import SemanticVersion
+from semantic_versioning import SemanticVersion
 
 SemanticVersion.parse("1.2.3") < SemanticVersion.parse("1.2.4") # True
 SemanticVersion.parse("1.2.3") < SemanticVersion.parse("1.2") # True

@@ -1,6 +1,6 @@
 import unittest
 
-from semversion import SemanticVersion
+from semantic_versioning import SemanticVersion
 
 
 class TestEqualsSemanticVersion(unittest.TestCase):

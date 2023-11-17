@@ -3,8 +3,8 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "semversion"
-description = "Annotation protocol to allow very thorough isinstance checks."
+name = "semantic-versioning"
+description = "A package for easily managing Semantic versions as described in PEP440."
 readme = "README.md"
 requires-python = ">=3.10"
 maintainers = [
@@ -15,8 +15,8 @@ optional-dependencies.dev = ["pytest", "black", "pre-commit", "isort", "bandit==
 dynamic = ["version"]
 
 [tool.setuptools]
-packages.find.include = ["semversion*"]
-dynamic.version.attr = "semversion._version.__version__"
+packages.find.include = ["semantic_versioning*"]
+dynamic.version.attr = "semantic_versioning._version.__version__"
 
 [tool.black]
 line-length = 99
@@ -30,10 +30,10 @@ max-complexity = 10
 
 [tool.ruff.per-file-ignores]
 "tests/*" = ["D102", "PLR2004", "S101"]
-"semversion/patterns.py" = ["E501"]
+"semantic_versioning/patterns.py" = ["E501"]
 
 [tool.pytest.ini_options]
 filterwarnings = [
     "ignore",
-    "default:::semversion.*",
+    "default:::semantic_versioning.*",
 ]
