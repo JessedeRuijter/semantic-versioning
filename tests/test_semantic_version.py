@@ -92,3 +92,25 @@ class TestCompareSemanticVersion(unittest.TestCase):
         assert SemanticVersion(1, 0, 0, [1, 1], dev_release=1) < SemanticVersion(
             1, 0, 0, [1, 1], dev_release=2
         )
+
+
+class TestStringifySemanticVersion(unittest.TestCase):
+    def test_stringify_simple_correct(self):
+        assert str(SemanticVersion(1)) == "1"
+        assert str(SemanticVersion(1, 12)) == "1.12"
+        assert str(SemanticVersion(1, 12, 0)) == "1.12.0"
+        assert str(SemanticVersion(1, 12, 0, [4])) == "1.12.0.4"
+        assert str(SemanticVersion(1, 12, 0, [4, 5])) == "1.12.0.4.5"
+
+    def test_stringify_other_separator_correct(self):
+        assert SemanticVersion(1).to_string(separator="-") == "1"
+        assert SemanticVersion(1, 12).to_string(separator="-") == "1-12"
+        assert SemanticVersion(1, 12, 0).to_string(separator="-") == "1-12-0"
+        assert SemanticVersion(1, 12, 0, [4]).to_string(separator="-") == "1-12-0-4"
+        assert SemanticVersion(1, 12, 0, [4, 5]).to_string(separator="-") == "1-12-0-4-5"
+
+    def test_stringify_release_correct(self):
+        assert str(SemanticVersion(1, pre_release_type="a", pre_release=3)) == "1a3"
+        assert str(SemanticVersion(1, 12, pre_release_type="b", pre_release=0)) == "1.12b0"
+        assert str(SemanticVersion(1, 12, 0, post_release=4)) == "1.12.0.post4"
+        assert str(SemanticVersion(1, 12, 0, [4, 5], dev_release=1)) == "1.12.0.4.5.dev1"

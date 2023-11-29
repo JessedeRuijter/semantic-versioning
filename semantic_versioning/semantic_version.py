@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import math
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import total_ordering
 from typing import Literal
 
@@ -18,7 +18,7 @@ class SemanticVersion:
     major: int
     minor: int | None = None
     patch: int | None = None
-    versions: list[int] | None = None
+    versions: list[int] = field(default_factory=list)
     pre_release_type: Literal["a", "b", "rc"] | None = None
     pre_release: int | None = None
     post_release: int | None = None
@@ -62,10 +62,6 @@ class SemanticVersion:
 
         return cls(**version_dict)
 
-    @staticmethod
-    def validate(version: str) -> bool:
-        return bool(re.fullmatch(re.compile(FULL_VERSION_PATTERN), version))
-
     def to_string(self, separator=".") -> str:
         """Convert version to a string separated with dots.
 
@@ -76,10 +72,15 @@ class SemanticVersion:
             str: version string.
         """
         version = str(self.major)
-        for v in filter(None, [self.minor, self.patch] + self.versions):
-            version += f".{v}"
-        for r in filter(None, [self.pre_release, self.post_release, self.dev_release]):
-            version += str(r)
+        for v in [self.minor, self.patch] + self.versions:
+            if v or v == 0:
+                version += f".{v}"
+        if self.pre_release is not None:
+            version += f"{self.pre_release_type}{self.pre_release}"
+        if self.post_release is not None:
+            version += f".post{self.post_release}"
+        if self.dev_release is not None:
+            version += f".dev{self.dev_release}"
 
         if separator != ".":
             version = version.replace(".", separator)
@@ -99,7 +100,6 @@ class SemanticVersion:
 
         Args:
             version (str): version to validate.
-            separator (str): separator between the major, minor and patch versions.
 
         Returns:
             bool: if it is a valid semantic version.
