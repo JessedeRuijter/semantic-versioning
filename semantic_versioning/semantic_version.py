@@ -15,28 +15,33 @@ INT_TYPES = ["major", "minor", "patch", "pre_release", "post_release", "dev_rele
 @dataclass
 @total_ordering
 class SemanticVersion:
+    """A version object."""
+
     major: int
-    minor: int | None = None
-    patch: int | None = None
+    minor: int | Literal["*"] | None = None
+    patch: int | Literal["*"] | None = None
     versions: list[int] = field(default_factory=list)
     pre_release_type: Literal["a", "b", "rc"] | None = None
-    pre_release: int | None = None
-    post_release: int | None = None
-    dev_release: int | None = None
+    pre_release: int | Literal["*"] | None = None
+    post_release: int | Literal["*"] | None = None
+    dev_release: int | Literal["*"] | None = None
 
     @classmethod
     def parse(cls: type[SemanticVersion], version: str, separator: str = ".") -> SemanticVersion:
         """Initialize a Semanticversion parsed from a string.
 
-        Args:
+        Attributes
+        ----------
             cls (type[SemanticVersion]): the SemanticVersion class.
             version (str): the version string to parse.
             separator (str): the charachter between the major, minor and patch versions.
 
-        Raises:
+        Raises
+        ------
             ValueError: Couldn't parse the version.
 
-        Returns:
+        Returns
+        -------
             SemanticVersion: a SemanticVersion object.
         """
         if separator != ".":
@@ -53,26 +58,26 @@ class SemanticVersion:
         for k, v in match.groupdict().items():
             if not v:
                 continue
-
             if k in INT_TYPES:
-                v = int(v)
+                version_dict[k] = int(v)
             elif k == "versions":
-                v = [int(w) for w in v.split(".") if w]
-            version_dict[k] = v
+                version_dict[k] = [int(w) for w in v.split(".") if w]
 
         return cls(**version_dict)
 
-    def to_string(self, separator=".") -> str:
+    def to_string(self, separator: str = ".") -> str:
         """Convert version to a string separated with dots.
 
-        Args:
+        Attributes
+        ----------
             separator (str): the charachter between the major, minor and patch versions.
 
-        Returns:
+        Returns
+        -------
             str: version string.
         """
         version = str(self.major)
-        for v in [self.minor, self.patch] + self.versions:
+        for v in [self.minor, self.patch, *self.versions]:
             if v or v == 0:
                 version += f".{v}"
         if self.pre_release is not None:
@@ -89,7 +94,8 @@ class SemanticVersion:
     def __str__(self) -> str:
         """Convert to string, will choose dotted version.
 
-        Returns:
+        Returns
+        -------
             str: dot-separated version string.
         """
         return self.to_string()
@@ -98,10 +104,12 @@ class SemanticVersion:
     def validate(version: str) -> bool:
         """Validate if a string complies to semantic version form.
 
-        Args:
+        Attributes
+        ----------
             version (str): version to validate.
 
-        Returns:
+        Returns
+        -------
             bool: if it is a valid semantic version.
         """
         pattern = re.compile(FULL_VERSION_PATTERN)
@@ -110,54 +118,56 @@ class SemanticVersion:
     def __eq__(self, other: SemanticVersion) -> bool:
         """Compare with another SemanticVersion if equal.
 
-        Args:
-            other (Any): version to compare with.
+        Attributes
+        ----------
+            other (SemanticVersion): version to compare with.
 
-        Returns:
+        Returns
+        -------
             bool: if the versions are equal.
         """
-        return (
-            isinstance(other, SemanticVersion)
-            and self.major == other.major
-            and self.minor == other.minor
-            and self.patch == other.patch
-            and self.versions == other.versions
-            and self.pre_release_type == other.pre_release_type
-            and self.pre_release == other.pre_release
-            and self.post_release == other.post_release
-            and self.dev_release == other.dev_release
+        return isinstance(other, SemanticVersion) and all(
+            self._equal_attribute(other, attribute)
+            for attribute in [*INT_TYPES, "versions", "pre_release_type"]
         )
+
+    def _equal_attribute(self, other: SemanticVersion, attribute: str) -> bool:
+        self_attribute = getattr(self, attribute)
+        other_attribute = getattr(other, attribute)
+        if self_attribute == "*" or other_attribute == "*":
+            return True
+        return self_attribute == other_attribute
 
     def __lt__(self, other: SemanticVersion) -> bool:
         """Compare with another SemanticVersion if smaller.
 
-        Args:
+        Attributes
+        ----------
             other (Any): version to compare with.
 
-        Returns:
+        Returns
+        -------
             bool: if the version is smaller than other.
         """
         versions_length = max(len(self.versions or []), len(other.versions or []))
         return self.__compare_tuple(self, versions_length) < self.__compare_tuple(
-            other, versions_length
+            other,
+            versions_length,
         )
 
     @staticmethod
     def __compare_tuple(v: SemanticVersion, v_length: int) -> tuple:
-        ct = (
+        pre_release_version = pre_release_type_to_int(v.pre_release_type)
+        return (
             v.major,
-            v.minor or math.inf,
-            v.patch or math.inf,
+            v.minor if v.minor is not None else math.inf,
+            v.patch if v.patch is not None else math.inf,
             *pad(v.versions, v_length, math.inf),
-            pre_release_type_to_int(v.pre_release_type) or math.inf
-            if not v.post_release and not v.dev_release
-            else -1,
+            pre_release_version or math.inf if not v.post_release and not v.dev_release else -1,
             v.pre_release or math.inf if not v.post_release and not v.dev_release else -1,
             v.post_release or math.inf if not v.dev_release else -1,
             v.dev_release or math.inf,
         )
-        print(ct)
-        return ct
 
     def __hash__(self) -> int:
         """Override hash to show version dotted notation."""

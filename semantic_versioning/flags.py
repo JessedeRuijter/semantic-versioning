@@ -8,3 +8,5 @@ class Operator(str, Enum):
     LE = "<="
     GT = ">"
     GE = ">="
+    COMPATIBLE = "~="
+    ARBITRAIR_EQ = "==="
