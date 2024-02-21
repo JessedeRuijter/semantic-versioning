@@ -40,7 +40,7 @@ class SemanticVersion:
             SemanticVersion: a SemanticVersion object.
         """
         if separator != ".":
-            version.replace(separator, ".")
+            version = version.replace(separator, ".")
 
         if not (match := re.fullmatch(re.compile(FULL_VERSION_PATTERN), version)):
             msg = (
